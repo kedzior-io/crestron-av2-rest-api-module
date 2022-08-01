@@ -1,0 +1,216 @@
+/****************************************************************/
+/*																*/
+/*	Title: HTTP REST API										*/
+/*	Description: Part of the Crestron module responsable for	*/
+/*  feeding Crestron program with level feedback                */
+/*                                                              */
+/* 	Author: Artur Kedzior 										*/
+/* 	Twitter: https://twitter.com/KedziorArtur 						*/
+/* 	Date: 05/03/2018 											*/
+/*																*/
+/****************************************************************/
+
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+#ENCODING_ASCII
+
+String_INPUT _SKIP_,HTTP_Request$[500];
+
+String_OUTPUT _SKIP_,
+			   HTTP_Command$, 
+			  _SKIP_, 
+			  HTTP_Response$, 
+			  _SKIP_, 
+			  lights_office_study_level$,
+			  lights_office_desk_level$,
+			  lights_living_room_window_level$,
+			  lights_living_room_front_level$,
+              lights_kitchen_level$,
+			  lights_entrance_level$,
+              lights_hall_level$,
+              lights_kids_window_level$,
+              lights_kids_cupboard_level$,
+              lights_bedroom_level$,
+              lights_toilet_level$,
+
+			  shades_living_room_level$,
+			  shades_office_level$,
+			  shades_kids_level$,
+			  shades_bedroom_level$;
+
+SIGNED_INTEGER result;
+String Command$[500];
+
+String ResponeOk$[500];
+String ResponeError$[500];
+
+
+
+
+STRING_FUNCTION GetStringBetween(STRING source, string start, string end)
+{
+	STRING strGet[100];
+	INTEGER posGet;
+
+    posGet = Find(start,source);
+	posGet = posGet + len(start);
+
+	return(mid(source, posGet,Find(end,source,posGet) - posGet));
+}
+
+
+CHANGE HTTP_Request$
+{
+	ResponeOk$ = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 0\nContent-Type: application/json;charset=utf-8\nAccess-Control-Allow-Origin: *\n\n";
+    ResponeError$ = "HTTP/1.1 404 Not Found\nConnection: close\nContent-Length: 0\nContent-Type: application/json;charset=utf-8\nAccess-Control-Allow-Origin: *\n\n";
+
+	HTTP_Response$ = ResponeOk$;	
+	HTTP_Command$ = GetStringBetween(HTTP_Request$,"GET /"," HTTP");
+	Command$ = GetStringBetween(HTTP_Request$,"GET /","/");
+   
+	// --------------------- Lights -------------------------------------------------------------------------
+
+	// I don't like the way it works
+	result = CompareStrings(Command$, "lights_office_study_level");
+
+	IF(result = 0)
+	{ 
+		lights_office_study_level$ = GetStringBetween(HTTP_Request$,"lights_office_study_level/"," HTTP");
+		HTTP_Response$ = ResponeOk$;
+		return;
+	}
+
+	result = CompareStrings(Command$, "lights_office_desk_level");
+
+	IF(result = 0) 
+	{ 
+		lights_office_desk_level$ = GetStringBetween(HTTP_Request$,"lights_office_desk_level/"," HTTP");
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}		
+
+	result = CompareStrings(Command$, "lights_living_room_window_level");
+
+	IF(result = 0) 
+	{ 
+		lights_living_room_window_level$ = GetStringBetween(HTTP_Request$,"lights_living_room_window_level/"," HTTP");
+		HTTP_Response$ = ResponeOk$;
+		return;	 
+	}		
+      
+	result = CompareStrings(Command$, "lights_living_room_front_level");
+
+	IF(result = 0) 
+	{ 
+		lights_living_room_front_level$ = GetStringBetween(HTTP_Request$,"lights_living_room_front_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}		
+        
+	result = CompareStrings(Command$, "lights_kitchen_level");
+
+	IF(result = 0) 
+	{ 
+		lights_kitchen_level$ = GetStringBetween(HTTP_Request$,"lights_kitchen_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;	
+	}
+
+	result = CompareStrings(Command$, "lights_entrance_level");
+
+	IF(result = 0) 
+	{ 
+		lights_entrance_level$ = GetStringBetween(HTTP_Request$,"lights_entrance_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}		
+
+	result = CompareStrings(Command$, "lights_hall_level");
+
+	IF(result = 0) 
+	{ 
+		lights_hall_level$ = GetStringBetween(HTTP_Request$,"lights_hall_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;
+	}
+		
+   	result = CompareStrings(Command$, "lights_kids_window_level");
+
+	IF(result = 0) 
+	{ 
+		lights_kids_window_level$ = GetStringBetween(HTTP_Request$,"lights_kids_window_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}
+
+   	result = CompareStrings(Command$, "lights_kids_cupboard_level");
+
+	IF(result = 0) 
+	{ 
+		lights_kids_cupboard_level$ = GetStringBetween(HTTP_Request$,"lights_kids_cupboard_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}
+      
+   	result = CompareStrings(Command$, "lights_bedroom_level");
+
+	IF(result = 0) 
+	{ 
+		lights_bedroom_level$ = GetStringBetween(HTTP_Request$,"lights_bedroom_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;	
+	}
+
+    result = CompareStrings(Command$, "lights_toilet_level");
+
+	IF(result = 0) 
+	{ 
+		lights_toilet_level$ = GetStringBetween(HTTP_Request$,"lights_toilet_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;	
+	}
+
+	// --------------------- Shades -----------------------------------------------------------------------
+
+	result = CompareStrings(Command$, "shades_living_room_level");
+
+	IF(result = 0) 
+	{ 
+		shades_living_room_level$ = GetStringBetween(HTTP_Request$,"shades_living_room_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;	
+	}
+
+	result = CompareStrings(Command$, "shades_office_level");
+
+	IF(result = 0) 
+	{ 
+		shades_office_level$ = GetStringBetween(HTTP_Request$,"shades_office_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;	
+	}
+
+	result = CompareStrings(Command$, "shades_kids_level");
+
+	IF(result = 0) 
+	{ 
+		shades_kids_level$ = GetStringBetween(HTTP_Request$,"shades_kids_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;	
+		return;
+	}
+
+	result = CompareStrings(Command$, "shades_bedroom_level");
+
+	IF(result = 0) 
+	{ 
+		shades_bedroom_level$ = GetStringBetween(HTTP_Request$,"shades_bedroom_level/"," HTTP"); 
+		HTTP_Response$ = ResponeOk$;
+		return;
+	}
+}
+
+Function Main()
+{
+
+}
